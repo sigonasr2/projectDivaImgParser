@@ -67,15 +67,17 @@ public class Controller {
 			} else {
 				tmp.mkdir();
 			}
+			String song = getSongTitle(img);
 			int cool = typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(790,242,118,26)),new File(tmp,"cool"));
 			int fine = typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,274,118,26)),new File(tmp,"fine"));
 			int safe = typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,308,118,26)),new File(tmp,"safe"));
 			int sad = typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,341,118,26)),new File(tmp,"sad"));
 			int worst = typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,372,118,26)),new File(tmp,"worst"));
 			float percent = (float)typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,154,122,31)),new File(tmp,"percent"))/100f;
-			boolean fail = textFailPixel(ImageUtils.cropImage(img, new Rectangle(492,181,1,1)));
+			boolean fail = textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
 
 			ImageIO.write(img,"png",new File("tmp/image.png"));
+			data.put("songname",song);
 			data.put("cool",Integer.toString(cool));
 			data.put("fine",Integer.toString(fine));
 			data.put("safe",Integer.toString(safe));
@@ -89,6 +91,24 @@ public class Controller {
 		return data;
     }
 	
+	private String getSongTitle(BufferedImage img) {
+		int matching = 0;
+		//There are 2304 pixels total. Once 2188 match, we'll call it good.
+		for (SongData song : DemoApplication.songs) {
+			for (int y=0;y<288;y++) {
+				for (int x=0;x<8;x++) {
+					if (song.data[(y*8)+x].getRGB()==img.getRGB(x+352, y+288)) {
+						matching++;
+					}
+					if (matching>2188) {
+						return song.song;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	public static void downloadFileFromUrl(String url, String file) throws IOException{
 		  File filer = new File(file);
 		  filer.createNewFile();
