@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.example.demo.DemoApplication;
+
 import sig.utils.FileUtils;
 import sig.utils.ImageUtils;
 
@@ -57,6 +59,15 @@ public class TypeFace {
 		for (int x=0;x<img.getWidth();x++) {
 			for (int y=0;y<img.getHeight();y++) {
 				Color currentCol = new Color(img.getRGB(x, y));
+				if (this.equals(DemoApplication.typeface3)) {
+					if ((currentCol.getRed()>=0 && currentCol.getRed()<=50
+						&& currentCol.getGreen()>=0 && currentCol.getGreen()<=100 
+						&& currentCol.getBlue()>=0 && currentCol.getBlue()<=120)) {
+						img.setRGB(x, y, new Color(8,114,140).getRGB());
+					} else {
+						img.setRGB(x, y, Color.WHITE.getRGB());
+					}
+				} else
 				if ((currentCol.getRed()>=0 && currentCol.getRed()<=100
 				&& currentCol.getGreen()>=0 && currentCol.getGreen()<=150 
 				&& currentCol.getBlue()>=0 && currentCol.getBlue()<=150) ||
@@ -153,7 +164,7 @@ public class TypeFace {
 							break;
 						}
 						X+=i.maxX;
-						if (numberImg.getHeight()<10 || numberImg.getWidth()<2) {
+						if (numberImg.getHeight()<10 || numberImg.getWidth()<4) {
 							//A number should be at least 10 pixels high...This is not satisfactory.
 							state=4;
 							break;

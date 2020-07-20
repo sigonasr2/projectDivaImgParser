@@ -73,14 +73,18 @@ public class Controller {
 				tmp.mkdir();
 			}
 			String song = getSongTitle(img);
-			int cool = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(790,242,118,26)),new File(tmp,"cool"));
-			int fine = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,274,118,26)),new File(tmp,"fine"));
-			int safe = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,308,118,26)),new File(tmp,"safe"));
-			int sad = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,341,118,26)),new File(tmp,"sad"));
-			int worst = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,372,118,26)),new File(tmp,"worst"));
-			float percent = DemoApplication.typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,154,122,31)),new File(tmp,"percent"))/100f;
-			boolean fail = textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
-
+			int cool = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(790,242,118,26)),new File(tmp,"cool"),false);
+			int fine = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,274,118,26)),new File(tmp,"fine"),false);
+			int safe = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,308,118,26)),new File(tmp,"safe"),false);
+			int sad = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,341,118,26)),new File(tmp,"sad"),false);
+			int worst = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,372,118,26)),new File(tmp,"worst"),false);
+			int combo = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(926,405,122,24)),new File(tmp,"combo"),false);
+			int score = DemoApplication.typeface3.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(808,537,237,36)),new File(tmp,"score"),false);
+			float percent = DemoApplication.typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,154,122,31)),new File(tmp,"percent"),false)/100f;
+			boolean fail = Controller.textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
+			String difficulty = Controller.GetDifficulty(ImageUtils.cropImage(img,new Rectangle(580,94,1,1)));
+			String getMod = Controller.GetMod(ImageUtils.cropImage(img,new Rectangle(993,70,105,54))); //"","HS","HD","SD"
+			
 			ImageIO.write(img,"png",new File("tmp/image.png"));
 			data.put("songname",song);
 			data.put("cool",Integer.toString(cool));
@@ -90,6 +94,10 @@ public class Controller {
 			data.put("worst",Integer.toString(worst));
 			data.put("percent",Float.toString(percent));
 			data.put("fail",Boolean.toString(fail));
+			data.put("difficulty",difficulty);
+			data.put("combo",Integer.toString(combo));
+			data.put("gameScore",Integer.toString(score));
+			data.put("mod",getMod);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +115,7 @@ public class Controller {
 				for (int x=0;x<8;x++) {
 					Color p2 = song.data[(y*8)+x];
 					Color p1 = new Color(img.getRGB(x+352, y+288));
-					matching+=Math.sqrt(Math.pow(p2.getRed()-p1.getRed(), 2)+Math.pow(p2.getGreen()-p1.getGreen(), 2)+Math.pow(p2.getBlue()-p1.getBlue(), 2));
+					matching+=ImageUtils.distanceToColor(p2,p1);
 				}
 			}
 			if (matching<lowestMatching) {
@@ -147,5 +155,51 @@ public class Controller {
 		    	System.out.println("Failed to connect, moving on...");
 		    }
 	  }
+
+	public static String GetDifficulty(BufferedImage img) {
+		final int TOLERANCE = 30;
+		Color p1 = new Color(169,13,236);
+		Color p2 = new Color(img.getRGB(0, 0));
+		if (ImageUtils.distanceToColor(p1, p2)<TOLERANCE) {
+			return "EXEX";
+		}
+		p1 = new Color(253,14,81);
+		if (ImageUtils.distanceToColor(p1, p2)<TOLERANCE) {
+			return "EX";
+		}
+		p1 = new Color(251,191,0);
+		if (ImageUtils.distanceToColor(p1, p2)<TOLERANCE) {
+			return "H";
+		}
+		p1 = new Color(20,234,0);
+		if (ImageUtils.distanceToColor(p1, p2)<TOLERANCE) {
+			return "N";
+		}
+		p1 = new Color(95,243,255);
+		if (ImageUtils.distanceToColor(p1, p2)<TOLERANCE) {
+			return "E";
+		}
+		return null;
+	}
+
+	public static String GetMod(BufferedImage img) {
+		final int TOLERANCE = 30;
+		Color hs = new Color(176,51,55);
+		Color hd = new Color(201,179,31);
+		Color sd = new Color(67,144,174);
+		Color p_hs = new Color(img.getRGB(22, 8));
+		Color p_hd = new Color(img.getRGB(51, 28));
+		Color p_sd = new Color(img.getRGB(81, 8));
+		if (ImageUtils.distanceToColor(p_hs, hs)<TOLERANCE) {
+			return "HS";
+		}
+		if (ImageUtils.distanceToColor(p_hd, hd)<TOLERANCE) {
+			return "HD";
+		}
+		if (ImageUtils.distanceToColor(p_sd, sd)<TOLERANCE) {
+			return "SD";
+		}
+		return "";
+	}
 
 }

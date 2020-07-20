@@ -1,5 +1,6 @@
 package sig.utils;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -86,5 +87,8 @@ public class ImageUtils {
 
 	    // Return the buffered image
 	    return bimage;
+	}
+	public static double distanceToColor(Color p2, Color p1) {
+		return Math.sqrt(Math.pow(p2.getRed()-p1.getRed(), 2)+Math.pow(p2.getGreen()-p1.getGreen(), 2)+Math.pow(p2.getBlue()-p1.getBlue(), 2));
 	}
 }
