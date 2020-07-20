@@ -136,8 +136,8 @@ public class Controller {
 			System.out.println(url);
 	        BufferedImage img = null;
 			if (url.contains("http://projectdivar.com/")) {
-				//System.out.println("Locally available.");
-				img = ImageIO.read(new File(url.replace("http://projectdivar.com/", "")));
+				System.out.println("Locally available. "+"./"+url.replace("http://projectdivar.com/", ""));
+				img = ImageIO.read(new File("./"+url.replace("http://projectdivar.com/", "")));
 			} else {
 				downloadFileFromUrl(url,"temp");
 				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
