@@ -1,8 +1,17 @@
 package com.example.demo;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -20,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
@@ -29,7 +39,11 @@ import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
@@ -51,11 +65,73 @@ public class Controller {
 		//r=128,g=5,b=232
 		return failPixel.getRed()>=50 && failPixel.getRed()<=150 && failPixel.getGreen()>=50 && failPixel.getGreen()<=150 && failPixel.getBlue()>=50 && failPixel.getBlue()<=150;
 	}
+	
+    @PostMapping("/image")
+    public String postImage(@RequestParam Map<String,String> body){
+		HashMap<String,String> data = new HashMap<>();
+    	if (body.containsKey("url") && body.containsKey("user") && body.containsKey("auth")) {
+    		HashMap<String,String> imageData = GetImageData(body.get("url"));
+    		data.putAll(imageData);
+    		data.put("user",body.get("user"));
+    		data.put("auth",body.get("auth"));
+    		//System.out.println("In here.");
+    		HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost("http://projectdivar.com/submit");
+
+			// Request parameters and other properties.
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("song", data.get("songname")));
+			params.add(new BasicNameValuePair("username", data.get("user")));
+			params.add(new BasicNameValuePair("authentication_token", data.get("auth")));
+			params.add(new BasicNameValuePair("difficulty", data.get("difficulty")));
+			params.add(new BasicNameValuePair("cool", data.get("cool")));
+			params.add(new BasicNameValuePair("fine", data.get("fine")));
+			params.add(new BasicNameValuePair("safe", data.get("safe")));
+			params.add(new BasicNameValuePair("sad", data.get("sad")));
+			params.add(new BasicNameValuePair("worst", data.get("worst")));
+			params.add(new BasicNameValuePair("percent", data.get("percent")));
+			params.add(new BasicNameValuePair("fail", data.get("fail")));
+			params.add(new BasicNameValuePair("combo", data.get("combo")));
+			params.add(new BasicNameValuePair("mod", data.get("mod")));
+			params.add(new BasicNameValuePair("gameScore", data.get("gameScore")));
+			try {
+				httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+
+			//Execute and get the response.
+			HttpResponse response = null;
+			try {
+				response = httpclient.execute(httppost);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			HttpEntity entity = response.getEntity();
+			String result = "";
+			if (entity != null) {
+			    try (InputStream instream = entity.getContent()) {
+			    	Scanner s = new Scanner(instream).useDelimiter("\\A");
+			    	result = s.hasNext() ? s.next() : "";
+			    	instream.close();
+			    } catch (UnsupportedOperationException | IOException e) {
+					e.printStackTrace();
+				}
+			}
+	    	return result;
+    	}
+		return "Invalid parameters!";
+    }
 
     @GetMapping("/image")
-    public HashMap<String,String> helloWorld(@RequestParam("url") String url){
+    public HashMap<String,String> getImage(@RequestParam("url") String url){
+		return GetImageData(url);
+    }
+
+	private HashMap<String, String> GetImageData(String url) {
 		HashMap<String,String> data = new HashMap<>();
 		//System.out.println(new File(".").getAbsolutePath());
+		//System.out.println(body);
 		try {
 			System.out.println(url);
 			downloadFileFromUrl(url,"temp");
@@ -102,7 +178,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		return data;
-    }
+	}
 	
 	public static String getSongTitle(BufferedImage img) {
 		final int THRESHOLD=1;

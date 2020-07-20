@@ -68,7 +68,7 @@ public class TypeFace {
 						img.setRGB(x, y, Color.WHITE.getRGB());
 					}
 				} else
-				if ((currentCol.getRed()>=0 && currentCol.getRed()<=100
+				if ((currentCol.getRed()>=0 && currentCol.getRed()<=105
 				&& currentCol.getGreen()>=0 && currentCol.getGreen()<=150 
 				&& currentCol.getBlue()>=0 && currentCol.getBlue()<=150) ||
 						(this.equals(DemoApplication.typeface2) && 
