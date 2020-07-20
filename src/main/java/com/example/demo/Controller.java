@@ -135,18 +135,21 @@ public class Controller {
 		//System.out.println(body);
 		try {
 			System.out.println(url);
+			File f;
 	        BufferedImage img = null;
 			if (url.contains("http://projectdivar.com/")) {
 				//System.out.println("Locally available. "+"./"+url.replace("http://projectdivar.com/", ""));
-				img = ImageIO.read(new File("../../server/"+url.replace("http://projectdivar.com/", "")));
+				f = new File("../../server/"+url.replace("http://projectdivar.com/", ""));
+				img = ImageIO.read(f);
 			} else {
 				downloadFileFromUrl(url,"temp");
 				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
-		        img = ImageIO.read(new File("temp"));
+				f = new File("temp");
+		        img = ImageIO.read(f);
 			}
 	        if (img.getWidth()!=1200) {
 	        	//Resize.
-	        	img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+	        	img = ImageUtils.toBufferedImage(ImageIO.read(f).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
 	        }
 			Point offset = new Point(418,204);
 			File tmp = new File("tmp");
