@@ -60,7 +60,7 @@ public class TypeFace {
 			for (int y=0;y<img.getHeight();y++) {
 				Color currentCol = new Color(img.getRGB(x, y));
 				if (this.equals(DemoApplication.typeface3)) {
-					if ((currentCol.getRed()>=0 && currentCol.getRed()<=50
+					if ((currentCol.getRed()>=0 && currentCol.getRed()<=70
 						&& currentCol.getGreen()>=0 && currentCol.getGreen()<=100 
 						&& currentCol.getBlue()>=0 && currentCol.getBlue()<=120)) {
 						img.setRGB(x, y, new Color(8,114,140).getRGB());
@@ -71,9 +71,11 @@ public class TypeFace {
 				if ((currentCol.getRed()>=0 && currentCol.getRed()<=100
 				&& currentCol.getGreen()>=0 && currentCol.getGreen()<=150 
 				&& currentCol.getBlue()>=0 && currentCol.getBlue()<=150) ||
-						(currentCol.getRed()>=0 && currentCol.getRed()<=60
-						&& currentCol.getGreen()>=100 && currentCol.getGreen()<=140 
-						&& currentCol.getBlue()>=120 && currentCol.getBlue()<=190)) {
+						(this.equals(DemoApplication.typeface2) && 
+								currentCol.getRed()>=0 && currentCol.getRed()<=120
+						&& currentCol.getGreen()>=100 && currentCol.getGreen()<=210 
+						&& currentCol.getBlue()>=120 && currentCol.getBlue()<=230
+								&& currentCol.getGreen()+5<currentCol.getBlue())) {
 					img.setRGB(x, y, new Color(8,114,140).getRGB());
 				} else {
 					img.setRGB(x, y, Color.WHITE.getRGB());
