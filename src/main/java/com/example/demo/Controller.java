@@ -134,9 +134,15 @@ public class Controller {
 		//System.out.println(body);
 		try {
 			System.out.println(url);
-			downloadFileFromUrl(url,"temp");
-			//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
-	        BufferedImage img = ImageIO.read(new File("temp"));
+	        BufferedImage img = null;
+			if (url.contains("http://projectdivar.com/files/")) {
+				//System.out.println("Locally available.");
+				img = ImageIO.read(new File("files",url.replace("http://projectdivar.com/files/", "")));
+			} else {
+				downloadFileFromUrl(url,"temp");
+				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
+		        img = ImageIO.read(new File("temp"));
+			}
 	        if (img.getWidth()!=1200) {
 	        	//Resize.
 	        	img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
