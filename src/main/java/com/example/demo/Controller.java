@@ -12,6 +12,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -67,7 +68,7 @@ public class Controller {
 	}
 	
     @PostMapping("/image")
-    public String postImage(@RequestParam Map<String,String> body){
+    public String postImage(@RequestBody Map<String,String> body){
 		HashMap<String,String> data = new HashMap<>();
     	if (body.containsKey("url") && body.containsKey("user") && body.containsKey("auth")) {
     		HashMap<String,String> imageData = GetImageData(body.get("url"));
