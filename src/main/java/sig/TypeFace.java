@@ -125,7 +125,7 @@ public class TypeFace {
 							}
 						}
 						if (darkFillCheck) {
-							success = fillDark(img,X,midY,0,0);
+							success = fillDark(img,X,midY,0,0,0);
 							if (!success) {
 								//We're done.
 								X=img.getWidth();
@@ -275,8 +275,11 @@ public class TypeFace {
 		}
 	}
 
-	public boolean fillDark(BufferedImage img,int startX,int startY,int x,int y) {
+	public boolean fillDark(BufferedImage img,int startX,int startY,int x,int y, int iterations) {
 		//rect.AddPixel(new Point(x,y), Color.BLACK);
+		if (iterations>Math.max(img.getWidth(),img.getHeight())) {
+			return false;
+		}
 		img.setRGB(startX+x, startY+y, Color.BLACK.getRGB());
 		Color p = null;
 		if (startX+x+1<img.getWidth()) {
@@ -284,7 +287,7 @@ public class TypeFace {
 			if (p.getBlue()>blue_fillminthreshold && p.getBlue()<blue_fillmaxthreshold &&
 					p.getGreen()>green_fillminthreshold && p.getGreen()<green_fillmaxthreshold &&
 					p.getRed()>red_fillminthreshold && p.getRed()<red_fillmaxthreshold) {
-				fillDark(img,startX,startY,x+1,y);
+				fillDark(img,startX,startY,x+1,y,iterations+1);
 			}
 		} else {
 			return false;
@@ -294,7 +297,7 @@ public class TypeFace {
 			if (p.getBlue()>blue_fillminthreshold && p.getBlue()<blue_fillmaxthreshold &&
 					p.getGreen()>green_fillminthreshold && p.getGreen()<green_fillmaxthreshold &&
 					p.getRed()>red_fillminthreshold && p.getRed()<red_fillmaxthreshold) {
-				fillDark(img,startX,startY,x-1,y);
+				fillDark(img,startX,startY,x-1,y,iterations+1);
 			}
 		} else {
 			return false;
@@ -304,7 +307,7 @@ public class TypeFace {
 			if (p.getBlue()>blue_fillminthreshold && p.getBlue()<blue_fillmaxthreshold &&
 					p.getGreen()>green_fillminthreshold && p.getGreen()<green_fillmaxthreshold &&
 					p.getRed()>red_fillminthreshold && p.getRed()<red_fillmaxthreshold) {
-				fillDark(img,startX,startY,x,y+1);
+				fillDark(img,startX,startY,x,y+1,iterations+1);
 			}
 		} else {
 			return false;
@@ -314,7 +317,7 @@ public class TypeFace {
 			if (p.getBlue()>blue_fillminthreshold && p.getBlue()<blue_fillmaxthreshold &&
 					p.getGreen()>green_fillminthreshold && p.getGreen()<green_fillmaxthreshold &&
 					p.getRed()>red_fillminthreshold && p.getRed()<red_fillmaxthreshold) {
-				fillDark(img,startX,startY,x,y-1);
+				fillDark(img,startX,startY,x,y-1,iterations+1);
 			}
 		} else {
 			return false;

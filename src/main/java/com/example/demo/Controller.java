@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import sig.TypeFace;
 import sig.utils.FileUtils;
 import sig.utils.ImageUtils;
@@ -95,6 +97,7 @@ public class Controller {
 			params.add(new BasicNameValuePair("combo", data.get("combo")));
 			params.add(new BasicNameValuePair("mod", data.get("mod")));
 			params.add(new BasicNameValuePair("gameScore", data.get("gameScore")));
+			params.add(new BasicNameValuePair("src", body.get("url")));
 			try {
 				httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
