@@ -19,7 +19,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import sig.TypeFace;
+import sig.Result;
 import sig.utils.FileUtils;
 import sig.utils.ImageUtils;
 
@@ -150,6 +150,7 @@ public class Controller {
 				f = new File("temp");
 		        img = ImageIO.read(f);
 			}
+			Result r = DemoApplication.typeface1.getAllData(img);
 	        if (img.getWidth()!=1200) {
 	        	//Resize.
 	        	img = ImageUtils.toBufferedImage(ImageIO.read(f).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
@@ -162,31 +163,20 @@ public class Controller {
 				tmp.mkdir();
 			}
 			String song = getSongTitle(img);
-			int cool = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(790,242,123,26)),new File(tmp,"cool"),false);
-			int fine = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,274,123,26)),new File(tmp,"fine"),false);
-			int safe = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,308,123,26)),new File(tmp,"safe"),false);
-			int sad = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,341,123,26)),new File(tmp,"sad"),false);
-			int worst = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,372,123,26)),new File(tmp,"worst"),false);
-			int combo = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(926,405,127,24)),new File(tmp,"combo"),false);
-			int score = DemoApplication.typeface3.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(808,537,242,36)),new File(tmp,"score"),false);
-			float percent = DemoApplication.typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,151,134,37)),new File(tmp,"percent"),false)/100f;
-			boolean fail = Controller.textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
-			String difficulty = Controller.GetDifficulty(ImageUtils.cropImage(img,new Rectangle(580,94,1,1)));
-			String getMod = Controller.GetMod(ImageUtils.cropImage(img,new Rectangle(993,70,105,54))); //"","HS","HD","SD"
 			
 			ImageIO.write(img,"png",new File("tmp/image.png"));
 			data.put("songname",song);
-			data.put("cool",Integer.toString(cool));
-			data.put("fine",Integer.toString(fine));
-			data.put("safe",Integer.toString(safe));
-			data.put("sad",Integer.toString(sad));
-			data.put("worst",Integer.toString(worst));
-			data.put("percent",Float.toString(percent));
-			data.put("fail",Boolean.toString(fail));
-			data.put("difficulty",difficulty);
-			data.put("combo",Integer.toString(combo));
-			data.put("gameScore",Integer.toString(score));
-			data.put("mod",getMod);
+			data.put("cool",Integer.toString(r.cool));
+			data.put("fine",Integer.toString(r.fine));
+			data.put("safe",Integer.toString(r.safe));
+			data.put("sad",Integer.toString(r.sad));
+			data.put("worst",Integer.toString(r.worst));
+			data.put("percent",Float.toString(r.percent));
+			data.put("fail",Boolean.toString(r.fail));
+			data.put("difficulty",r.difficulty);
+			data.put("combo",Integer.toString(r.combo));
+			data.put("gameScore",Integer.toString(r.score));
+			data.put("mod",r.mod);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

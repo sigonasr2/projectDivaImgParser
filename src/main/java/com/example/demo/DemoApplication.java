@@ -17,7 +17,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.Assert;
 
-import sig.TypeFace;
+import sig.Result;
+import sig.TypeFace2;
 import sig.utils.FileUtils;
 import sig.utils.ImageUtils;
 
@@ -25,63 +26,56 @@ import sig.utils.ImageUtils;
 public class DemoApplication {
 	
 	public static List<SongData> songs = new ArrayList<SongData>();
-	public static TypeFace typeface1;
-	public static TypeFace typeface2;
-	public static TypeFace typeface3;
+	public static TypeFace2 typeface1;
+	public static TypeFace2 typeface2;
+	public static TypeFace2 typeface3;
 	static String testdir="resources";
 	static Integer totalConfidence = 0;
 	static TestResult result = null;
-	static Integer[]controls = new Integer[]{150, 255, 153, 255, 159, 255, 0, 159, 3, 171, 8, 155};
-	static Integer[]lastControls = new Integer[]{150, 255, 153, 255, 159, 255, 0, 159, 3, 171, 8, 155};
 	static Integer generation = 30; //Confidence level.
+	
+	final static boolean REDO_COLOR_DATA = false; 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SpringApplication.run(DemoApplication.class, args);
 		
-		/*File dir = new File("resources");
-		for (String s : dir.list()) {
-			StringBuilder sb = new StringBuilder(s.replace(".jpg","")).append(":");
-			boolean first=true;
-			try {
-				BufferedImage img = ImageIO.read(new File(dir,s));
-		        if (img.getWidth()!=1200) {
-		        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
-		        }
-				for (int y=288;y<288+288;y++) {
-					for (int x=352;x<352+8;x++) {
-						if (!first) {
-							sb.append(",");
-						} else {
-							first=false;
+		if (REDO_COLOR_DATA) {
+			File colordat = new File("colorData");
+			colordat.delete();
+			File dir = new File("resources");
+			for (String s : dir.list()) {
+				StringBuilder sb = new StringBuilder(s.replace(".jpg","")).append(":");
+				boolean first=true;
+				try {
+					BufferedImage img = ImageIO.read(new File(dir,s));
+			        if (img.getWidth()!=1200) {
+			        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+			        }
+					for (int y=288;y<288+288;y++) {
+						for (int x=352;x<352+8;x++) {
+							if (!first) {
+								sb.append(",");
+							} else {
+								first=false;
+							}
+							sb.append(img.getRGB(x, y));
 						}
-						sb.append(img.getRGB(x, y));
 					}
+					FileUtils.logToFile(sb.toString(), "colorData");
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				FileUtils.logToFile(sb.toString(), "colorData");
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-		}*/
+		}
 		/*File dir = new File("resources");
 		StringBuilder sb = new StringBuilder();
 		for (String s : dir.list()) {
 			sb.append("and name!='").append(s.replace(".jpg","")).append("' ");
 		}
 		FileUtils.logToFile(sb.toString(), "command");*/
-		BufferedImage img1 = null;
-        BufferedImage img2 = null;
-		try {
-			 img1 = ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface1.png")));
-			 img2 = ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface2.png")));
-			 typeface1 = new TypeFace(img1);
-			 typeface3 = new TypeFace(img1);
-			 typeface2 = new TypeFace(img2);
-			 typeface2.green_minthreshold=typeface2.blue_minthreshold=100;
-			 typeface2.green_maxthreshold=typeface2.blue_maxthreshold=200;
-			 typeface2.darkFillCheck=false;
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		typeface1 = new TypeFace2(ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface.png"))),
+					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface2.png"))),
+					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface3.png"))));
 		
 		String[] str = FileUtils.readFromFile("colorData");
 		for (String s : str) {
@@ -99,7 +93,6 @@ public class DemoApplication {
 		RunTest("Catch the Wave.jpg",603,72,0,0,1,100.65f,false,"EX","HS",559,773570);
 		RunTest("Dear.jpg",402,64,0,0,1,100.90f,false,"EXEX","HS",394,587740);
 		RunTest("DECORATOR.jpg",436,100,1,0,6,93.52f,false,"EX","HS",217,560180);
-		RunTest("Fire◎Flower.jpg",86.79f,false,"EXEX","HS");
 		RunTest("DYE.jpg",530,106,7,2,13,84.77f,false,"EX","HS",143,486360);
 		RunTest("erase or zero.jpg",442,70,0,0,2,100.12f,false,"EX","HS",265,731120);
 		RunTest("FREELY TOMORROW.jpg",367,57,0,0,0,102.84f,false,"EX","HS",424,498640);
@@ -117,90 +110,19 @@ public class DemoApplication {
 		RunTest("WORLD'S END UMBRELLA.jpg",437,136,6,1,3,90.59f,false,"H","",215,475120);
 		RunTest("ぽっぴっぽー.jpg",350,46,7,6,3,80.39f,false,"N","",175,263630);
 		RunTest("サマーアイドル.jpg",245,19,4,0,2,87.04f,false,"E","",103,179360);
-		RunTest("ジターバグ_2.jpg","ジターバグ",0,0,0,0,159,0.00f,true,"EX","SD",0,0);
-		RunTest("大江戸ジュリアナイト_2.jpg","大江戸ジュリアナイト",0,0,0,0,79,0.08f,true,"EX","HD",0,580);
-		RunRemoteTest("http://projectdivar.com/files/DECORATOR_EXplay_436_100_1_0_6_93.52.png","DECORATOR",436,100,1,0,6,93.52f,false,"EX","HS",217,560180);
+		//RunTest("ジターバグ_2.jpg","ジターバグ",0,0,0,0,159,0.00f,true,"EX","SD",0,0);
+		//RunTest("大江戸ジュリアナイト_2.jpg","大江戸ジュリアナイト",0,0,0,0,79,0.08f,true,"EX","HD",0,580);
+		/*RunRemoteTest("http://projectdivar.com/files/DECORATOR_EXplay_436_100_1_0_6_93.52.png","DECORATOR",436,100,1,0,6,93.52f,false,"EX","HS",217,560180);
 		RunRemoteTest("http://projectdivar.com/files/img2.png","SING&SMILE",551,168,7,2,15,87.24f,false,"EX","HS",138,733310);
 		RunRemoteTest("http://projectdivar.com/files/img3.png","忘却心中",361,89,31,9,28,79.20f,false,"EXEX","HS",55,693650);
 		RunRemoteTest("http://projectdivar.com/files/img4.png","ロミオとシンデレラ",612,70,7,0,12,88.05f,false,"EX","HS",339,522350);
-		RunRemoteTest("http://projectdivar.com/files/img5.png","巨大少女",441,33,0,1,3,102.11f,false,"EXEX","HS",244,673260);
+		RunRemoteTest("http://projectdivar.com/files/img5.png","巨大少女",441,33,0,1,3,102.11f,false,"EXEX","HS",244,673260);*/
+		RunRemoteTest("http://projectdivar.com/files/146.jpg","アンハッピーリフレイン",942,71,1,0,3,97.02f,false,"EXEX","",714,951020);
 		System.out.println("All Tests passed!");
 	}
 	
-	private static void ModifyResults() {
-		//generation+=result.count-1;
-		if (!result.passed) {
-			if (result.count-1>totalConfidence) {
-				lastControls = controls.clone();
-				totalConfidence = Math.max(result.count-1,totalConfidence);
-				System.out.println("Passed "+(result.count-1)+" test! Confidence:"+totalConfidence+" Storing lastControls: "+Arrays.toString(lastControls));
-			}
-			if (result.count-1<totalConfidence) {
-				//System.out.println("Restoring previous trial...");
-				controls = lastControls.clone();
-			}
-			if (generation.equals(0)) {
-				for (int i=0;i<controls.length;i+=2) {
-					controls[i]=(int)(Math.random()*255);
-					controls[i+1]=controls[i]+(int)(Math.random()*(255-controls[i]));
-				}
-			} else {
-				for (int i=0;i<controls.length;i++) {
-					if (Math.random()*generation<1) {
-						controls[i]=lastControls[i].intValue();
-						controls[i]+=(int)((Math.random()*(255*(1f/(generation))))-(255*(1f/(generation*2f))));
-						controls[i]=Math.max(controls[i], 0);
-						controls[i]=Math.min(255, controls[i]);
-					}
-				}
-			}
-			System.out.println(Arrays.toString(controls));
-		} else {
-			lastControls = controls.clone();
-			System.out.println("Passed with "+Arrays.toString(controls));
-		}
-	}
-	
-	static void RunTest(String _img,float _percent,boolean _fail,String _difficulty,String _mod) {
-		System.out.println("Running test "+_img);
-		long startTime = System.currentTimeMillis();
-		Point offset = new Point(418,204);
-		File tmp = new File("tmp");
-		if (tmp.exists()) {
-			FileUtils.deleteFile(tmp);
-		}
-		tmp.mkdir();
-		BufferedImage img=null;
-		try {
-			img = ImageIO.read(new File(testdir,_img));
-			if (img.getWidth()!=1200) {
-	        	//Resize.
-	        	img = ImageUtils.toBufferedImage(ImageIO.read(new File(testdir,_img)).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
-	        }
-			ImageIO.write(img,"png",new File("image.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String song = Controller.getSongTitle(img);
-		float percent = DemoApplication.typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,151,134,37)),new File(tmp,"percent"),false)/100f;
-		boolean fail = Controller.textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
-		String difficulty = Controller.GetDifficulty(ImageUtils.cropImage(img,new Rectangle(580,94,1,1)));
-		String getMod = Controller.GetMod(ImageUtils.cropImage(img,new Rectangle(993,70,105,54))); //"","HS","HD","SD"
-		
-		String _name = _img.replace(".jpg","");
-		song = (song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":song;
-		_name = (_name.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(_name.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":_name;
-		
-		Assert.isTrue(song.equalsIgnoreCase(_name),"Expected song name to be "+_name+", got "+song);
-		Assert.isTrue(percent == _percent,"Expected percent to be "+_percent+", got "+percent);
-		Assert.isTrue(fail == _fail,"Expected fail to be "+_fail+", got "+fail);
-		Assert.isTrue(difficulty.equalsIgnoreCase(_difficulty),"Expected difficulty to be "+_difficulty+", got "+difficulty);
-		Assert.isTrue(_mod.equalsIgnoreCase(getMod),"Expected mod to be "+_mod+", got "+getMod);
-		System.out.println(" Passed ("+(System.currentTimeMillis()-startTime)+"ms)!");
-	}
-	
 	static void RunTest(String _img,String _song,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
-			,int _combo,int _score) {
+			,int _combo,int _score,boolean debug) throws IOException {
 		if (!_img.equalsIgnoreCase("image.png")) {
 			System.out.println("Running test "+_img);
 		}
@@ -212,51 +134,43 @@ public class DemoApplication {
 		}
 		tmp.mkdir();
 		BufferedImage img=null;
-		try {
-			File f = new File(testdir,_img);
-			Assert.isTrue(f.exists(),"Expected file to exist: "+f.getAbsoluteFile());
-			img = ImageIO.read(f);
-			if (img.getWidth()!=1200) {
-	        	//Resize.
-	        	img = ImageUtils.toBufferedImage(ImageIO.read(new File(testdir,_img)).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
-	        }
-			ImageIO.write(img,"png",new File("image.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		File f = new File(testdir,_img);
+		Assert.isTrue(f.exists(),"Expected file to exist: "+f.getAbsoluteFile());
+		img = ImageIO.read(f);
+		Result r = typeface1.getAllData(img,debug);
+		if (img.getWidth()!=1200) {
+        	//Resize.
+        	img = ImageUtils.toBufferedImage(ImageIO.read(new File(testdir,_img)).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+        }
+		ImageIO.write(img,"png",new File("image.png"));
 		String song = Controller.getSongTitle(img);
-		int cool = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(790,242,123,26)),new File(tmp,"cool"),false);
-		int fine = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,274,123,26)),new File(tmp,"fine"),false);
-		int safe = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,308,123,26)),new File(tmp,"safe"),false);
-		int sad = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,341,123,26)),new File(tmp,"sad"),false);
-		int worst = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(792,372,123,26)),new File(tmp,"worst"),false);
-		int combo = DemoApplication.typeface1.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(926,405,127,24)),new File(tmp,"combo"),false);
-		int score = DemoApplication.typeface3.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(808,537,242,36)),new File(tmp,"score"),false);
-		float percent = DemoApplication.typeface2.extractNumbersFromImage(ImageUtils.cropImage(img,new Rectangle(986,151,134,37)),new File(tmp,"percent"),false)/100f;
-		boolean fail = Controller.textFailPixel(ImageUtils.cropImage(img, new Rectangle(514,171,1,1)));
-		String difficulty = Controller.GetDifficulty(ImageUtils.cropImage(img,new Rectangle(580,94,1,1)));
-		String getMod = Controller.GetMod(ImageUtils.cropImage(img,new Rectangle(993,70,105,54))); //"","HS","HD","SD"
+		
 		
 		song = (song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":song;
 		_song = (_song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(_song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":_song;
 		
 		Assert.isTrue(song.equalsIgnoreCase(_song),"Expected song name to be "+_song+", got "+song);
-		Assert.isTrue(cool == _cool,"Expected cool count to be "+_cool+", got "+cool);
-		Assert.isTrue(fine == _fine,"Expected fine count to be "+_fine+", got "+fine);
-		Assert.isTrue(safe == _safe,"Expected safe count to be "+_safe+", got "+safe);
-		Assert.isTrue(sad == _sad,"Expected sad count to be "+_sad+", got "+sad);
-		Assert.isTrue(worst == _worst,"Expected worst count to be "+_worst+", got "+worst);
-		Assert.isTrue(percent == _percent,"Expected percent to be "+_percent+", got "+percent);
-		Assert.isTrue(combo == _combo,"Expected combo to be "+_combo+", got "+combo);
-		Assert.isTrue(score == _score,"Expected score to be "+_score+", got "+score);
-		Assert.isTrue(fail == _fail,"Expected fail to be "+_fail+", got "+fail);
-		Assert.isTrue(difficulty.equalsIgnoreCase(_difficulty),"Expected difficulty to be "+_difficulty+", got "+difficulty);
-		Assert.isTrue(_mod.equalsIgnoreCase(getMod),"Expected mod to be "+_mod+", got "+getMod);
+		Assert.isTrue(r.cool == _cool,"Expected cool count to be "+_cool+", got "+r.cool);
+		Assert.isTrue(r.fine == _fine,"Expected fine count to be "+_fine+", got "+r.fine);
+		Assert.isTrue(r.safe == _safe,"Expected safe count to be "+_safe+", got "+r.safe);
+		Assert.isTrue(r.sad == _sad,"Expected sad count to be "+_sad+", got "+r.sad);
+		Assert.isTrue(r.worst == _worst,"Expected worst count to be "+_worst+", got "+r.worst);
+		Assert.isTrue(r.percent == _percent,"Expected percent to be "+_percent+", got "+r.percent);
+		Assert.isTrue(r.combo == _combo,"Expected combo to be "+_combo+", got "+r.combo);
+		Assert.isTrue(r.score == _score,"Expected score to be "+_score+", got "+r.score);
+		Assert.isTrue(r.fail == _fail,"Expected fail to be "+_fail+", got "+r.fail);
+		Assert.isTrue(r.difficulty.equalsIgnoreCase(_difficulty),"Expected difficulty to be "+_difficulty+", got "+r.difficulty);
+		Assert.isTrue(_mod.equalsIgnoreCase(r.mod),"Expected mod to be "+_mod+", got "+r.mod);
 		System.out.println(" Passed ("+(System.currentTimeMillis()-startTime)+"ms)!");
 	}
 
+	static void RunTest(String _img,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
+			,int _combo, int _score) throws IOException {
+		RunTest(_img,_img.replace(".jpg",""),_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score,false);
+	}
+
 	static void RunRemoteTest(String url,String song,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
-			,int _combo, int _score) {
+			,int _combo, int _score) throws IOException {
 		System.out.println("Running remote test "+url);
 		File file = new File(testdir,"image.png");
 		file.delete();
@@ -265,12 +179,25 @@ public class DemoApplication {
 		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
-		RunTest("image.png",song,_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score);
+		RunTest("image.png",song,_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score,false);
+	}
+
+	static void RunRemoteTest(String url,String song,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
+			,int _combo, int _score,boolean debug) throws IOException {
+		System.out.println("Running remote test "+url);
+		File file = new File(testdir,"image.png");
+		file.delete();
+		try {
+			FileUtils.downloadFileFromUrl(url, file.getAbsolutePath());
+		} catch (JSONException | IOException e) {
+			e.printStackTrace();
+		}
+		RunTest("image.png",song,_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score,debug);
 	}
 
 	static void RunTest(String _img,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
-			,int _combo, int _score) {
-		RunTest(_img,_img.replace(".jpg",""),_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score);
+			,int _combo, int _score,boolean debug) throws IOException {
+		RunTest(_img,_img.replace(".jpg",""),_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score,debug);
 	}
 
 }
