@@ -34,7 +34,7 @@ public class DemoApplication {
 	static TestResult result = null;
 	static Integer generation = 30; //Confidence level.
 	
-	final static boolean REDO_COLOR_DATA = true; 
+	final static boolean REDO_COLOR_DATA = false; 
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(DemoApplication.class, args);
