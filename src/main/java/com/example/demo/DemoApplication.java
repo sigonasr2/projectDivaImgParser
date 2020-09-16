@@ -34,7 +34,7 @@ public class DemoApplication {
 	static TestResult result = null;
 	static Integer generation = 30; //Confidence level.
 	
-	final static boolean REDO_COLOR_DATA = false; 
+	final static boolean REDO_COLOR_DATA = true; 
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(DemoApplication.class, args);
@@ -121,6 +121,22 @@ public class DemoApplication {
 		System.out.println("All Tests passed!");
 	}
 	
+	public static String getCorrectSongName(String song) {
+		switch (song.toLowerCase()) {
+			case "pianogirl":{
+				return "PIANO*GIRL";
+			}
+			case "16 -out of the gravity-":{
+				return "1/6 -out of the gravity-";
+			}
+			case "ファインダー (DSLR remix - reedit)":{
+				return "ファインダー (DSLR remix - re:edit)";
+			}
+			default:
+				return song;
+		}
+	}
+	
 	static void RunTest(String _img,String _song,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
 			,int _combo,int _score,boolean debug) throws IOException {
 		if (!_img.equalsIgnoreCase("image.png")) {
@@ -146,8 +162,8 @@ public class DemoApplication {
 		String song = Controller.getSongTitle(img);
 		
 		
-		song = (song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":song;
-		_song = (_song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(_song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":_song;
+		song = getCorrectSongName(song);
+		_song = getCorrectSongName(_song);
 		
 		Assert.isTrue(song.equalsIgnoreCase(_song),"Expected song name to be "+_song+", got "+song);
 		Assert.isTrue(r.cool == _cool,"Expected cool count to be "+_cool+", got "+r.cool);

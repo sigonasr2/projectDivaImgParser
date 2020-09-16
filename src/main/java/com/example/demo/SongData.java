@@ -9,7 +9,7 @@ public class SongData {
 	public SongData(String parseStr) {
 		String[] split = parseStr.split(":");
 		song = split[0];
-		song = (song.equalsIgnoreCase("PIANOGIRL"))?"PIANO*GIRL":(song.equalsIgnoreCase("16 -out of the gravity-"))?"1/6 -out of the gravity-":song; 
+		song = DemoApplication.getCorrectSongName(song); 
 		String[] colors = split[1].split(",");
 		data = new Color[colors.length];
 		for (int i=0;i<colors.length;i++) {

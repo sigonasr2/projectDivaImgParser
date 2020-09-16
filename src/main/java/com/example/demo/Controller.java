@@ -159,9 +159,8 @@ public class Controller {
 			File tmp = new File("tmp");
 			if (tmp.exists()) {
 				FileUtils.deleteFile(tmp);
-			} else {
-				tmp.mkdir();
 			}
+			tmp.mkdir();
 			String song = getSongTitle(img);
 			
 			ImageIO.write(img,"png",new File("tmp/image.png"));
