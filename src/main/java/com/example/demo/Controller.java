@@ -145,10 +145,12 @@ public class Controller {
 				f = new File("../../server/"+url.replace("http://projectdivar.com/", ""));
 				img = ImageIO.read(f);
 			} else {
-				downloadFileFromUrl(url,"temp");
+				/*downloadFileFromUrl(url,"temp");
 				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
-				f = new File("temp");
-		        img = ImageIO.read(f);
+				f = new File("temp");*/
+		        img = ImageIO.read(new URL(url));
+		        f = new File("temp");
+		        ImageIO.write(img,"jpg",f);
 			}
 			Result r = DemoApplication.typeface1.getAllData(img);
 	        if (img.getWidth()!=1200) {
