@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -17,6 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.Assert;
 
+import sig.MyRobot;
 import sig.Result;
 import sig.TypeFace2;
 import sig.utils.FileUtils;
@@ -26,6 +28,7 @@ import sig.utils.ImageUtils;
 public class DemoApplication {
 	
 	public static List<SongData> songs = new ArrayList<SongData>();
+	public static List<SongData> FTsongs = new ArrayList<SongData>();
 	public static TypeFace2 typeface1;
 	public static TypeFace2 typeface2;
 	public static TypeFace2 typeface3;
@@ -42,30 +45,10 @@ public class DemoApplication {
 		if (REDO_COLOR_DATA) {
 			File colordat = new File("colorData");
 			colordat.delete();
-			File dir = new File("resources");
-			for (String s : dir.list()) {
-				StringBuilder sb = new StringBuilder(s.replace(".jpg","").replace("_alt","")).append(":");
-				boolean first=true;
-				try {
-					BufferedImage img = ImageIO.read(new File(dir,s));
-			        if (img.getWidth()!=1200) {
-			        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
-			        }
-					for (int y=288;y<288+288;y++) {
-						for (int x=352;x<352+8;x++) {
-							if (!first) {
-								sb.append(",");
-							} else {
-								first=false;
-							}
-							sb.append(img.getRGB(x, y));
-						}
-					}
-					FileUtils.logToFile(sb.toString(), "colorData");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			colordat = new File("FTcolorData");
+			colordat.delete();
+			SearchSongs("resources","colorData");
+			SearchSongs("resourcesFT","FTcolorData");
 		}
 		/*File dir = new File("resources");
 		StringBuilder sb = new StringBuilder();
@@ -75,11 +58,17 @@ public class DemoApplication {
 		FileUtils.logToFile(sb.toString(), "command");*/
 		typeface1 = new TypeFace2(ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface.png"))),
 					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface2.png"))),
-					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface3.png"))));
+					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface3.png"))),
+					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface4.png"))),
+					 ImageUtils.toCompatibleImage(ImageIO.read(new File("typeface5.png"))));
 		
 		String[] str = FileUtils.readFromFile("colorData");
 		for (String s : str) {
 			songs.add(new SongData(s));
+		}
+		str = FileUtils.readFromFile("FTcolorData");
+		for (String s : str) {
+			FTsongs.add(new SongData(s));
 		}
 		RunTest("16 -out of the gravity-.jpg",554,45,1,0,1,101.36f,false,"EX","HS",339,606780);
 		RunTest("＊ハロー、プラネット。 (I.M.PLSE-EDIT).jpg",336,128,24,6,93,58.85f,true,"EX","",52,308760);
@@ -123,6 +112,36 @@ public class DemoApplication {
 		RunRemoteTest("http://projectdivar.com/files/146.jpg","アンハッピーリフレイン",942,71,1,0,3,97.02f,false,"EXEX","",714,951020);
 		System.out.println("All Tests passed!");
 	}
+
+	private static void SearchSongs(String folderName,String colorDataFile) {
+		File dir = new File(folderName);
+		for (String s : dir.list()) {
+			StringBuilder sb = new StringBuilder(s.replace(".jpg","").replace("_alt","")).append(":");
+			boolean first=true;
+			try {
+				BufferedImage img = ImageIO.read(new File(dir,s));
+				
+				img = Controller.CropFutureToneImage(img);
+				
+		        if (img.getWidth()!=1200) {
+		        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+		        }
+				for (int y=288;y<288+288;y++) {
+					for (int x=352;x<352+8;x++) {
+						if (!first) {
+							sb.append(",");
+						} else {
+							first=false;
+						}
+						sb.append(img.getRGB(x, y));
+					}
+				}
+				FileUtils.logToFile(sb.toString(), colorDataFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public static String getCorrectSongName(String song) {
 		switch (song.toLowerCase()) {
@@ -135,6 +154,16 @@ public class DemoApplication {
 			case "ファインダー (DSLR remix - reedit)":{
 				return "ファインダー (DSLR remix - re:edit)";
 			}
+			case "恋ノート":{
+				return "恋ノート////";
+			}
+			case "Equation+":{
+				return "Equation+**";
+			}
+			case "雨のちSweetDrops":{
+				return "雨のちSweet*Drops";
+			}
+				
 			default:
 				return song;
 		}

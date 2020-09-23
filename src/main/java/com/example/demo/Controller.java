@@ -19,6 +19,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import sig.MyRobot;
 import sig.Result;
 import sig.utils.FileUtils;
 import sig.utils.ImageUtils;
@@ -51,7 +52,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 @RestController
-public class Controller {    
+public class Controller {
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -152,7 +153,16 @@ public class Controller {
 		        f = new File("temp");
 		        ImageIO.write(img,"jpg",f);
 			}
-			Result r = DemoApplication.typeface1.getAllData(img);
+			
+			img = CropFutureToneImage(img);
+			
+			Result r=null;
+			try {
+				r = DemoApplication.typeface1.getAllData(img);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 	        if (img.getWidth()!=1200) {
 	        	//Resize.
 	        	img = ImageUtils.toBufferedImage(ImageIO.read(f).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
@@ -182,6 +192,47 @@ public class Controller {
 			e.printStackTrace();
 		}
 		return data;
+	}
+
+	public static BufferedImage CropFutureToneImage(BufferedImage img) throws IOException {
+		Point crop1 = null;
+		Point crop2 = null;
+		
+		Color col = new Color(img.getRGB(0, 0));
+		if (col.getRed()<=5&&col.getGreen()<=5&&col.getBlue()<=5) {
+			MyRobot.FUTURETONE=true;
+			boolean done=false;
+			for (int x=img.getWidth()-1;x>=img.getWidth()*(7f/8);x--) {
+				for (int y=0;y<img.getHeight()/8;y++) {
+					col = new Color(img.getRGB(x, y));
+					if (col.getRed()>=100&&col.getGreen()>=100&&col.getBlue()>=100) {
+						crop1 = new Point(x,y);
+						done=true;
+						break;
+					}
+				}
+				if (done) {
+					break;
+				}
+			}
+			done=false;
+			for (int x=0;x<img.getWidth()/8;x++) {
+				for (int y=img.getHeight()-1;y>=img.getHeight()*(7f/8);y--) {
+					col = new Color(img.getRGB(x, y));
+					if (col.getRed()>=100&&col.getGreen()>=100&&col.getBlue()>=100) {
+						crop2 = new Point(x,y);
+						done=true;
+						break;
+					}
+				}
+				if (done) {
+					break;
+				}
+			}
+			img = img.getSubimage(crop2.x, crop1.y, crop1.x-crop2.x, crop2.y-crop1.y);
+			//ImageIO.write(img,"png",new File("test.png"));
+		}
+		return img;
 	}
 	
 	public static String getSongTitle(BufferedImage img) {
