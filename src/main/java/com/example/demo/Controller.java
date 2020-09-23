@@ -240,27 +240,52 @@ public class Controller {
 		float lowestMatching = Integer.MAX_VALUE;
 		SongData matchingSong = null;
 		//There are 2304 pixels total. Once 2188 match, we'll call it good.
-		for (SongData song : DemoApplication.songs) {
-			float matching = 0;
-			for (int y=0;y<288;y++) {
-				for (int x=0;x<8;x++) {
-					Color p2 = song.data[(y*8)+x];
-					Color p1 = new Color(img.getRGB(x+352, y+288));
-					matching+=ImageUtils.distanceToColor(p2,p1);
+		if (MyRobot.FUTURETONE) {
+			for (SongData song : DemoApplication.songs) {
+				float matching = 0;
+				for (int y=0;y<288;y++) {
+					for (int x=0;x<8;x++) {
+						Color p2 = song.data[(y*8)+x];
+						Color p1 = new Color(img.getRGB(x+352, y+288));
+						matching+=ImageUtils.distanceToColor(p2,p1);
+					}
 				}
+				if (matching<lowestMatching) {
+					lowestMatching=matching;
+					matchingSong = song;
+				}
+	
+	            /*try {
+					PrintStream out = new PrintStream(System.out, true, "UTF-8");
+					out.println("Comparing to "+song.song+": "+matching);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}*/
+	            
 			}
-			if (matching<lowestMatching) {
-				lowestMatching=matching;
-				matchingSong = song;
+		} else {
+			for (SongData song : DemoApplication.FTsongs) {
+				float matching = 0;
+				for (int y=0;y<288;y++) {
+					for (int x=0;x<8;x++) {
+						Color p2 = song.data[(y*8)+x];
+						Color p1 = new Color(img.getRGB(x+352, y+288));
+						matching+=ImageUtils.distanceToColor(p2,p1);
+					}
+				}
+				if (matching<lowestMatching) {
+					lowestMatching=matching;
+					matchingSong = song;
+				}
+	
+	            /*try {
+					PrintStream out = new PrintStream(System.out, true, "UTF-8");
+					out.println("Comparing to "+song.song+": "+matching);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}*/
+	            
 			}
-
-            /*try {
-				PrintStream out = new PrintStream(System.out, true, "UTF-8");
-				out.println("Comparing to "+song.song+": "+matching);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}*/
-            
 		}
 		//System.out.println("Lowest: "+lowestMatching);
 		return matchingSong.song;
