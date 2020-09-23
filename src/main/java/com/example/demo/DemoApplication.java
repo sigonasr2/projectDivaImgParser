@@ -146,23 +146,31 @@ public class DemoApplication {
 	}
 	
 	public static String getCorrectSongName(String song) {
-		switch (song.toLowerCase()) {
+		switch (song.toLowerCase()) { 
+		/***************
+		 * 
+		 * 
+		 * THIS IS USING TO LOWER CASE!
+		 * USE LOWERCASE!!!
+		 * 
+		 * 
+		 *****************/
 			case "pianogirl":{
 				return "PIANO*GIRL";
 			}
 			case "16 -out of the gravity-":{
 				return "1/6 -out of the gravity-";
 			}
-			case "ファインダー (DSLR remix - reedit)":{
+			case "ファインダー (dslr remix - reedit)":{
 				return "ファインダー (DSLR remix - re:edit)";
 			}
 			case "恋ノート":{
 				return "恋ノート////";
 			}
-			case "Equation+":{
+			case "equation+":{
 				return "Equation+**";
 			}
-			case "雨のちSweetDrops":{
+			case "雨のちsweetdrops":{
 				return "雨のちSweet*Drops";
 			}
 				

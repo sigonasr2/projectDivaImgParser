@@ -10,6 +10,7 @@ public class SongData {
 		String[] split = parseStr.split(":");
 		song = split[0];
 		song = DemoApplication.getCorrectSongName(song); 
+		System.out.println(song);
 		String[] colors = split[1].split(",");
 		data = new Color[colors.length];
 		for (int i=0;i<colors.length;i++) {
