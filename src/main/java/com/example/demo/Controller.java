@@ -231,7 +231,10 @@ public class Controller {
 			}
 			img = img.getSubimage(crop2.x, crop1.y, crop1.x-crop2.x, crop2.y-crop1.y);
 			//ImageIO.write(img,"png",new File("test.png"));
+		} else {
+			MyRobot.FUTURETONE=false;
 		}
+		//System.out.println("Future Tone? "+MyRobot.FUTURETONE);
 		return img;
 	}
 	
@@ -241,7 +244,7 @@ public class Controller {
 		SongData matchingSong = null;
 		//There are 2304 pixels total. Once 2188 match, we'll call it good.
 		if (MyRobot.FUTURETONE) {
-			for (SongData song : DemoApplication.songs) {
+			for (SongData song : DemoApplication.FTsongs) {
 				float matching = 0;
 				for (int y=0;y<288;y++) {
 					for (int x=0;x<8;x++) {
@@ -264,7 +267,7 @@ public class Controller {
 	            
 			}
 		} else {
-			for (SongData song : DemoApplication.FTsongs) {
+			for (SongData song : DemoApplication.songs) {
 				float matching = 0;
 				for (int y=0;y<288;y++) {
 					for (int x=0;x<8;x++) {

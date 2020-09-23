@@ -100,6 +100,7 @@ public class DemoApplication {
 		RunTest("ぽっぴっぽー.jpg",350,46,7,6,3,80.39f,false,"N","",175,263630);
 		RunTest("サマーアイドル.jpg",245,19,4,0,2,87.04f,false,"E","",103,179360);
 		RunTest("アゲアゲアゲイン_alt.jpg","アゲアゲアゲイン",452,201,20,11,34,71.89f,false,"EX","",115,543240,false);
+		RunTest("test.jpg","1/6 -out of the gravity-",575,26,0,0,0,104.51f,false,"EX","HS",601,698951,false);
 		RunTest("EiMmwvJUMAEVmaT.jpg","アゲアゲアゲイン",0,0,0,0,89,0.00f,true,"E","",0,0,false);
 		//RunTest("test38.jpg","サマーアイドル",345,49,6,2,2,94.53f,false,"H","",232,347990,false);
 		//RunTest("ジターバグ_2.jpg","ジターバグ",0,0,0,0,159,0.00f,true,"EX","SD",0,0);
@@ -109,7 +110,7 @@ public class DemoApplication {
 		RunRemoteTest("http://projectdivar.com/files/img3.png","忘却心中",361,89,31,9,28,79.20f,false,"EXEX","HS",55,693650);
 		RunRemoteTest("http://projectdivar.com/files/img4.png","ロミオとシンデレラ",612,70,7,0,12,88.05f,false,"EX","HS",339,522350);
 		RunRemoteTest("http://projectdivar.com/files/img5.png","巨大少女",441,33,0,1,3,102.11f,false,"EXEX","HS",244,673260);*/
-		RunRemoteTest("http://projectdivar.com/files/146.jpg","アンハッピーリフレイン",942,71,1,0,3,97.02f,false,"EXEX","",714,951020);
+		//RunRemoteTest("http://projectdivar.com/files/146.jpg","アンハッピーリフレイン",942,71,1,0,3,97.02f,false,"EXEX","",714,951020);
 		System.out.println("All Tests passed!");
 	}
 
@@ -188,6 +189,7 @@ public class DemoApplication {
 		}
 		Assert.isTrue(f.exists(),"Expected file to exist: "+f.getAbsoluteFile());
 		img = ImageIO.read(f);
+		img = Controller.CropFutureToneImage(img);
 		Result r = typeface1.getAllData(img,debug);
 		if (img.getWidth()!=1200) {
         	//Resize.
