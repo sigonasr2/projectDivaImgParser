@@ -101,6 +101,7 @@ public class DemoApplication {
 		RunTest("サマーアイドル.jpg",245,19,4,0,2,87.04f,false,"E","",103,179360);
 		RunTest("アゲアゲアゲイン_alt.jpg","アゲアゲアゲイン",452,201,20,11,34,71.89f,false,"EX","",115,543240,false);
 		RunTest("test.jpg","1/6 -out of the gravity-",575,26,0,0,0,104.51f,false,"EX","HS",601,698951,false);
+		RunTest("test2.jpg","エンヴィキャットウォーク",26,6,2,3,129,4.96f,true,"EX","HS",3,47575,false);
 		RunTest("EiMmwvJUMAEVmaT.jpg","アゲアゲアゲイン",0,0,0,0,89,0.00f,true,"E","",0,0,false);
 		//RunTest("test38.jpg","サマーアイドル",345,49,6,2,2,94.53f,false,"H","",232,347990,false);
 		//RunTest("ジターバグ_2.jpg","ジターバグ",0,0,0,0,159,0.00f,true,"EX","SD",0,0);
@@ -190,10 +191,11 @@ public class DemoApplication {
 		Assert.isTrue(f.exists(),"Expected file to exist: "+f.getAbsoluteFile());
 		img = ImageIO.read(f);
 		img = Controller.CropFutureToneImage(img);
+		ImageIO.write(img,"png",new File("test.png"));
 		Result r = typeface1.getAllData(img,debug);
 		if (img.getWidth()!=1200) {
         	//Resize.
-        	img = ImageUtils.toBufferedImage(ImageIO.read(f).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
         }
 		ImageIO.write(img,"png",new File("image.png"));
 		String song = Controller.getSongTitle(img);

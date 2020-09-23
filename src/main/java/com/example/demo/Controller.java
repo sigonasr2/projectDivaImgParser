@@ -165,7 +165,8 @@ public class Controller {
 			
 	        if (img.getWidth()!=1200) {
 	        	//Resize.
-	        	img = ImageUtils.toBufferedImage(ImageIO.read(f).getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+	        	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
+				//ImageIO.write(img,"png",new File("testresize.png"));
 	        }
 			Point offset = new Point(418,204);
 			File tmp = new File("tmp");
@@ -230,7 +231,6 @@ public class Controller {
 				}
 			}
 			img = img.getSubimage(crop2.x, crop1.y, crop1.x-crop2.x, crop2.y-crop1.y);
-			//ImageIO.write(img,"png",new File("test.png"));
 		} else {
 			MyRobot.FUTURETONE=false;
 		}
@@ -238,19 +238,25 @@ public class Controller {
 		return img;
 	}
 	
-	public static String getSongTitle(BufferedImage img) {
+	public static String getSongTitle(BufferedImage img) throws IOException {
 		final int THRESHOLD=1;
 		float lowestMatching = Integer.MAX_VALUE;
 		SongData matchingSong = null;
 		//There are 2304 pixels total. Once 2188 match, we'll call it good.
 		if (MyRobot.FUTURETONE) {
+			File f = new File("debugcol");
+			FileUtils.deleteFile(f);
+			f.mkdirs();
 			for (SongData song : DemoApplication.FTsongs) {
+				BufferedImage debug = new BufferedImage(16,288,BufferedImage.TYPE_INT_ARGB);
 				float matching = 0;
 				for (int y=0;y<288;y++) {
 					for (int x=0;x<8;x++) {
 						Color p2 = song.data[(y*8)+x];
 						Color p1 = new Color(img.getRGB(x+352, y+288));
 						matching+=ImageUtils.distanceToColor(p2,p1);
+						/*debug.setRGB(x,y,p2.getRGB());
+						debug.setRGB(x+8,y,p1.getRGB());*/
 					}
 				}
 				if (matching<lowestMatching) {
@@ -260,11 +266,12 @@ public class Controller {
 	
 	            /*try {
 					PrintStream out = new PrintStream(System.out, true, "UTF-8");
-					out.println("Comparing to "+song.song+": "+matching);
+					out.println("Comparing to "+song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")+": "+matching);
+					//ImageIO.write(debug,"png",new File("debugcol",song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
-				}*/
-	            
+				}
+	            */
 			}
 		} else {
 			for (SongData song : DemoApplication.songs) {
@@ -281,7 +288,7 @@ public class Controller {
 					matchingSong = song;
 				}
 	
-	            /*try {
+				/*try {
 					PrintStream out = new PrintStream(System.out, true, "UTF-8");
 					out.println("Comparing to "+song.song+": "+matching);
 				} catch (UnsupportedEncodingException e) {
