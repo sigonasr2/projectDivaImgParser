@@ -73,6 +73,7 @@ public class DemoApplication {
 		for (String s : str) {
 			FTsongs.add(new SongData(s));
 		}
+		RunTest("test6.png","ありふれたせかいせいふく",586,161,6,5,9,85.75f,false,"EX","",425,672452,false);
 		RunTest("test5.png","ZIGG-ZAGG",88,18,1,2,13,11.87f,true,"EXEX","HS",28,88935,false);
 		RunTest("test3.png","メルト",39,9,0,0,9,7.44f,true,"EXEX","HS",48,40040,false);
 		RunTest("16 -out of the gravity-.jpg",554,45,1,0,1,101.36f,false,"EX","HS",339,606780);
@@ -216,20 +217,28 @@ public class DemoApplication {
 		
 		song = getCorrectSongName(song);
 		_song = getCorrectSongName(_song);
-		
-		Assert.isTrue(song.equalsIgnoreCase(_song),"Expected song name to be "+_song+", got "+song);
-		Assert.isTrue(r.cool == _cool,"Expected cool count to be "+_cool+", got "+r.cool);
-		Assert.isTrue(r.fine == _fine,"Expected fine count to be "+_fine+", got "+r.fine);
-		Assert.isTrue(r.safe == _safe,"Expected safe count to be "+_safe+", got "+r.safe);
-		Assert.isTrue(r.sad == _sad,"Expected sad count to be "+_sad+", got "+r.sad);
-		Assert.isTrue(r.worst == _worst,"Expected worst count to be "+_worst+", got "+r.worst);
-		Assert.isTrue(r.percent == _percent,"Expected percent to be "+_percent+", got "+r.percent);
-		Assert.isTrue(r.combo == _combo,"Expected combo to be "+_combo+", got "+r.combo);
-		Assert.isTrue(r.score == _score,"Expected score to be "+_score+", got "+r.score);
-		Assert.isTrue(r.fail == _fail,"Expected fail to be "+_fail+", got "+r.fail);
-		Assert.isTrue(r.difficulty.equalsIgnoreCase(_difficulty),"Expected difficulty to be "+_difficulty+", got "+r.difficulty);
-		Assert.isTrue(_mod.equalsIgnoreCase(r.mod),"Expected mod to be "+_mod+", got "+r.mod);
-		System.out.println(" Passed ("+(System.currentTimeMillis()-startTime)+"ms)!");
+		try {
+			Assert.isTrue(song.equalsIgnoreCase(_song),"Expected song name to be "+_song+", got "+song);
+			Assert.isTrue(r.cool == _cool,"Expected cool count to be "+_cool+", got "+r.cool);
+			Assert.isTrue(r.fine == _fine,"Expected fine count to be "+_fine+", got "+r.fine);
+			Assert.isTrue(r.safe == _safe,"Expected safe count to be "+_safe+", got "+r.safe);
+			Assert.isTrue(r.sad == _sad,"Expected sad count to be "+_sad+", got "+r.sad);
+			Assert.isTrue(r.worst == _worst,"Expected worst count to be "+_worst+", got "+r.worst);
+			Assert.isTrue(r.percent == _percent,"Expected percent to be "+_percent+", got "+r.percent);
+			Assert.isTrue(r.combo == _combo,"Expected combo to be "+_combo+", got "+r.combo);
+			Assert.isTrue(r.score == _score,"Expected score to be "+_score+", got "+r.score);
+			Assert.isTrue(r.fail == _fail,"Expected fail to be "+_fail+", got "+r.fail);
+			Assert.isTrue(r.difficulty.equalsIgnoreCase(_difficulty),"Expected difficulty to be "+_difficulty+", got "+r.difficulty);
+			Assert.isTrue(_mod.equalsIgnoreCase(r.mod),"Expected mod to be "+_mod+", got "+r.mod);
+			System.out.println(" Passed ("+(System.currentTimeMillis()-startTime)+"ms)!");
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			if (!debug) {
+				System.err.println("Running in debug mode...");
+				RunTest(_img,_song,_cool,_fine,_safe,_sad,_worst,_percent,_fail,_difficulty,_mod,_combo,_score,true);
+				System.exit(0);
+			}
+		}
 	}
 
 	static void RunTest(String _img,int _cool,int _fine, int _safe, int _sad, int _worst, float _percent,boolean _fail,String _difficulty,String _mod
