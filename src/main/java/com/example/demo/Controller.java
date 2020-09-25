@@ -200,7 +200,8 @@ public class Controller {
 		Point crop2 = null;
 		
 		Color col = new Color(img.getRGB(0, 0));
-		if (col.getRed()<=5&&col.getGreen()<=5&&col.getBlue()<=5) {
+		ColorRegion ft_results = new ColorRegion(img,new Rectangle(81,35,80,37));
+		if ((col.getRed()<=5&&col.getGreen()<=5&&col.getBlue()<=5)||ft_results.getAllRange(30,150,60,180,60,180)) {
 			MyRobot.FUTURETONE=true;
 			boolean done=false;
 			for (int x=img.getWidth()-1;x>=img.getWidth()*(7f/8);x--) {
@@ -239,6 +240,10 @@ public class Controller {
 	}
 	
 	public static String getSongTitle(BufferedImage img) throws IOException {
+		return getSongTitle(img,false);
+	}
+	
+	public static String getSongTitle(BufferedImage img,boolean debugging) throws IOException {
 		final int THRESHOLD=1;
 		float lowestMatching = Integer.MAX_VALUE;
 		SongData matchingSong = null;
@@ -255,45 +260,54 @@ public class Controller {
 						Color p2 = song.data[(y*8)+x];
 						Color p1 = new Color(img.getRGB(x+352, y+288));
 						matching+=ImageUtils.distanceToColor(p2,p1);
-						/*debug.setRGB(x,y,p2.getRGB());
-						debug.setRGB(x+8,y,p1.getRGB());*/
+						if (debugging) {
+							debug.setRGB(x,y,p2.getRGB());
+							debug.setRGB(x+8,y,p1.getRGB());
+						}
 					}
 				}
 				if (matching<lowestMatching) {
 					lowestMatching=matching;
 					matchingSong = song;
 				}
-	
-	            /*try {
-					PrintStream out = new PrintStream(System.out, true, "UTF-8");
-					out.println("Comparing to "+song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")+": "+matching);
-					//ImageIO.write(debug,"png",new File("debugcol",song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+				if (debugging) {
+		            try {
+						PrintStream out = new PrintStream(System.out, true, "UTF-8");
+						out.println("Comparing to "+song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")+": "+matching);
+						//ImageIO.write(debug,"png",new File("debugcol",song.song.replaceAll("/","").replaceAll("\\*","").replaceAll(":","")));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
-	            */
 			}
 		} else {
 			for (SongData song : DemoApplication.songs) {
+				BufferedImage debug = new BufferedImage(16,288,BufferedImage.TYPE_INT_ARGB);
 				float matching = 0;
 				for (int y=0;y<288;y++) {
 					for (int x=0;x<8;x++) {
 						Color p2 = song.data[(y*8)+x];
 						Color p1 = new Color(img.getRGB(x+352, y+288));
 						matching+=ImageUtils.distanceToColor(p2,p1);
+						if (debugging) {
+							debug.setRGB(x,y,p2.getRGB());
+							debug.setRGB(x+8,y,p1.getRGB());
+						}
 					}
 				}
 				if (matching<lowestMatching) {
 					lowestMatching=matching;
 					matchingSong = song;
 				}
-	
-				/*try {
-					PrintStream out = new PrintStream(System.out, true, "UTF-8");
-					out.println("Comparing to "+song.song+": "+matching);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}*/
+
+				if (debugging) {
+					try {
+						PrintStream out = new PrintStream(System.out, true, "UTF-8");
+						out.println("Comparing to "+song.song+": "+matching);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
 	            
 			}
 		}

@@ -42,6 +42,9 @@ public class DemoApplication {
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(DemoApplication.class, args);
 		
+		File debugFolder = new File("debug");
+		FileUtils.deleteFile(debugFolder);
+		
 		if (REDO_COLOR_DATA) {
 			File colordat = new File("colorData");
 			colordat.delete();
@@ -70,6 +73,8 @@ public class DemoApplication {
 		for (String s : str) {
 			FTsongs.add(new SongData(s));
 		}
+		RunTest("test5.png","ZIGG-ZAGG",88,18,1,2,13,11.87f,true,"EXEX","HS",28,88935,false);
+		RunTest("test3.png","メルト",39,9,0,0,9,7.44f,true,"EXEX","HS",48,40040,false);
 		RunTest("16 -out of the gravity-.jpg",554,45,1,0,1,101.36f,false,"EX","HS",339,606780);
 		RunTest("＊ハロー、プラネット。 (I.M.PLSE-EDIT).jpg",336,128,24,6,93,58.85f,true,"EX","",52,308760);
 		
@@ -206,7 +211,7 @@ public class DemoApplication {
         	img = ImageUtils.toBufferedImage(img.getScaledInstance(1200, 675, Image.SCALE_SMOOTH));
         }
 		ImageIO.write(img,"png",new File("image.png"));
-		String song = Controller.getSongTitle(img);
+		String song = Controller.getSongTitle(img,debug);
 		
 		
 		song = getCorrectSongName(song);
