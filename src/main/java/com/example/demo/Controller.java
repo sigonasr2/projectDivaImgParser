@@ -149,9 +149,10 @@ public class Controller {
 				/*downloadFileFromUrl(url,"temp");
 				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
 				f = new File("temp");*/
-		        img = ImageIO.read(new URL(url));
-		        f = new File("temp");
-		        ImageIO.write(img,"jpg",f);
+		        img = ImageIO.read(new URL(url+":orig"));
+		        img = ImageIO.read(new URL(url+":orig"));
+		        f = new File("temp.png");
+		        ImageIO.write(img,"png",f);
 			}
 			
 			img = CropFutureToneImage(img);
