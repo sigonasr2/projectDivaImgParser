@@ -201,8 +201,9 @@ public class Controller {
 		Point crop2 = null;
 		
 		Color col = new Color(img.getRGB(0, 0));
-		ColorRegion ft_results = new ColorRegion(img,new Rectangle(81,35,80,37));
-		if ((col.getRed()<=5&&col.getGreen()<=5&&col.getBlue()<=5)||ft_results.getAllRange(30,150,60,180,60,180)) {
+		BufferedImage img2 = ImageUtils.toBufferedImage(img.getScaledInstance(1280 , 720, Image.SCALE_SMOOTH));
+		ColorRegion ft_results = new ColorRegion(img2,new Rectangle(81,35,80,37));
+		if ((col.getRed()<=5&&col.getGreen()<=5&&col.getBlue()<=5)) {
 			MyRobot.FUTURETONE=true;
 			boolean done=false;
 			for (int x=img.getWidth()-1;x>=img.getWidth()*(7f/8);x--) {
@@ -234,7 +235,11 @@ public class Controller {
 			}
 			img = img.getSubimage(crop2.x, crop1.y, crop1.x-crop2.x, crop2.y-crop1.y);
 		} else {
-			MyRobot.FUTURETONE=false;
+			if (ft_results.getAllRange(30,150,60,180,60,180)) {
+				MyRobot.FUTURETONE=true;
+			} else {
+				MyRobot.FUTURETONE=false;
+			}
 		}
 		//System.out.println("Future Tone? "+MyRobot.FUTURETONE);
 		return img;
