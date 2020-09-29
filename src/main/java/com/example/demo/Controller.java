@@ -156,8 +156,8 @@ public class Controller {
 			}
 			
 			img = CropFutureToneImage(img);
-			
-			Result r=null;
+			//String song,String diff,int cool,int fine,int safe,int sad,int worst,float percent
+			Result r=new Result("","",-1,-1,-1,-1,-1,0f);
 			try {
 				r = DemoApplication.typeface1.getAllData(img);
 			} catch (Exception e) {
