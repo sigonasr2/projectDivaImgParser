@@ -121,7 +121,7 @@ public class DemoApplication {
 		RunRemoteTest("http://projectdivar.com/files/img4.png","ロミオとシンデレラ",612,70,7,0,12,88.05f,false,"EX","HS",339,522350);
 		RunRemoteTest("http://projectdivar.com/files/img5.png","巨大少女",441,33,0,1,3,102.11f,false,"EXEX","HS",244,673260);*/
 		//RunRemoteTest("http://projectdivar.com/files/146.jpg","アンハッピーリフレイン",942,71,1,0,3,97.02f,false,"EXEX","",714,951020);
-		System.out.println("All Tests passed!");
+		System.out.println("All Tests passed! - Test Update");
 	}
 
 	private static void SearchSongs(String folderName,String colorDataFile) {
