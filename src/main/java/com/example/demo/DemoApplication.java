@@ -73,6 +73,7 @@ public class DemoApplication {
 		for (String s : str) {
 			FTsongs.add(new SongData(s));
 		}
+		RunTest("test12.jpg","アゲアゲアゲイン",612,32,0,0,0,104.78f,false,"H","",644,734316,false);
 		RunTest("test10.jpg","どりーみんチュチュ",456,207,31,11,18,71.06f,false,"EX","",96,544610,false);
 		RunTest("test9.jpg","アゲアゲアゲイン",436,217,24,3,38,72.49f,false,"EX","",82,552330,false);
 		RunTest("test8.png","メテオ",478,57,2,0,1,100.19f,false,"EX","",229,695618,false);
