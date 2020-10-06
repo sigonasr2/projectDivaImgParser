@@ -143,8 +143,12 @@ public class Controller {
 	        BufferedImage img = null;
 			if (url.contains("http://projectdivar.com/")) {
 				//System.out.println("Locally available. "+"./"+url.replace("http://projectdivar.com/", ""));
-				f = new File("../../server/"+url.replace("http://projectdivar.com/", ""));
-				img = ImageIO.read(f);
+				/*f = new File("../../server/"+url.replace("http://projectdivar.com/", ""));
+				img = ImageIO.read(f);*/
+		        img = ImageIO.read(new URL(url));
+		        img = ImageIO.read(new URL(url));
+		        f = new File("temp.png");
+		        ImageIO.write(img,"png",f);
 			} else {
 				/*downloadFileFromUrl(url,"temp");
 				//BufferedImage img = ImageUtils.toBufferedImage(ImageIO.read(new File("temp")).getScaledInstance(1227, 690, Image.SCALE_SMOOTH));
